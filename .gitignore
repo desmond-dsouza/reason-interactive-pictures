@@ -1,0 +1,20 @@
+# dependencies
+node_modules
+
+# build
+lib
+.merlin
+public/main.js
+lib
+.merlin
+
+# logs
+*.log
+
+# mac
+.DS_Store
+
+circle.yml
+now.json
+
+scripts/
