@@ -14,7 +14,7 @@
   "sources": [
     {
       "dir": "src",
-      "subdirs": [ ]
+      "subdirs": [ { "dir": "examples" } ]
     }
   ]
 }
