@@ -27,8 +27,7 @@
   "license": "MIT",
   "dependencies": {
     "bs-director": "^0.0.1",
-    "bucklescript-tea": "^0.5.1",
-    "http-server": "^0.10.0"
+    "bucklescript-tea": "^0.5.1"
   },
   "devDependencies": {
     "bs-jest": "^0.1.0",
