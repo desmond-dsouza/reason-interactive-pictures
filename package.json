@@ -17,8 +17,7 @@
     "dev:webpack": "webpack-dev-server -w",
     "now-start": "pushstate-server public/",
     "jest": "jest",
-    "test": "npm-run-all build:bsb jest",
-    "start": "./node_modules/.bin/http-server"
+    "test": "npm-run-all build:bsb jest"
   },
   "keywords": [
     "reason",
