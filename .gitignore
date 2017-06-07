@@ -4,7 +4,6 @@ node_modules
 # build
 lib
 .merlin
-public/main.js
 lib
 .merlin
 
