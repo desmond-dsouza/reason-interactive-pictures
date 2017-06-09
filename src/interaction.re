@@ -185,4 +185,4 @@ let simulate (start: 'm) view (update: time => 'm => 'm) =>
     update: simulateUpdate update,
     subscriptions: simulateSubs
   };
-/* ******** Interact & beyond: directly use beginnerProgram & standardProgram ********* */
+/* ******** Interact : use Tea.App.beginnerProgram ********* */
