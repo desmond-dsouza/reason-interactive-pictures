@@ -23,7 +23,7 @@ let string_of_color c =>
   | Brown => "brown"
   | Purple => "purple"
   | Blue => "blue"
-  | Rgb r g b => Printf.sprintf "rgb(%d,%d,%d)" r g b
+  | Rgb r g b => {j|rgb($r,$g,$b)|j}
   };
 
 type figure =
@@ -49,8 +49,8 @@ type mainType = Js.null_undefined Web.Node.t => unit => Tea.App.programInterface
 let picture (width, height) figures => {
   module S = Tea.Svg;
   module SA = Tea.Svg.Attributes;
-  let w = Printf.sprintf "%dpx" width;
-  let h = Printf.sprintf "%dpx" height;
+  let w = {j|$(width)px|j};
+  let h = {j|$(height)px|j};
   let nodes = figures |> List.map render;
   S.svg [SA.width w, SA.height h] nodes
 };
