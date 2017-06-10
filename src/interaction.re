@@ -1,5 +1,4 @@
 /* TODO: pictureOf, animationOf, etc. naming, see https://code.world/ */
-/* TODO: easy speed-control UI */
 /* TODO: real-time graphs (JS interop: https://goo.gl/DlcmvT) */
 module Cmd = Tea.Cmd;
 
@@ -23,12 +22,10 @@ let init (model: 'm) (_flag: 'flags) :(model 'm, Cmd.t msg) => (
 
 let drawUpdate model msg =>
   switch msg {
-  | TimeTick _ => (model, Cmd.none)
+  | TimeTick _t => (model, Cmd.none)
   };
 
-let accumTimeSub (time: time) :Tea_sub.t msg => Time.every 60.0 timeTick;
-
-let viewModelWindowToHtml view model window => view model;
+let timerSubscription (delta_ms: time) _ => Time.every delta_ms timeTick;
 
 /* ******** Draw:: view : Html ********* */
 let draw view =>
@@ -40,23 +37,21 @@ let draw view =>
   };
 
 /* ******** Animate:: view : time -> Html ********* */
-let animateSubs {time} => Tea.Sub.batch [accumTimeSub time, Tea.Sub.none];
-
 let animateUpdate model msg =>
   switch msg {
   | TimeTick newTime => ({...model, time: newTime}, Cmd.none)
   };
 
-let animate view =>
+let animate view ::delta_ms=60.0 =>
   Tea.App.standardProgram {
     init: init (),
     view: fun {time} => view time,
     update: animateUpdate,
-    subscriptions: animateSubs
+    subscriptions: timerSubscription delta_ms
   };
 
 /* ******** Simulate: view : model -> time -> Html ********* */
-let simulateUpdate update ({model} as simulateModel) msg =>
+let simulateUpdate update {model} msg =>
   switch msg {
   | TimeTick newTime =>
     let updatedModel = update newTime model;
@@ -67,15 +62,14 @@ let simulateUpdate update ({model} as simulateModel) msg =>
       } else {
         updatedModel
       };
-    ({...simulateModel, time: newTime, model: newModel}, Cmd.none)
+    ({time: newTime, model: newModel}, Cmd.none)
   };
 
-let simulateSubs {time} => Tea.Sub.batch [accumTimeSub time, Tea.Sub.none];
-
-let simulate (start: 'm) view (update: time => 'm => 'm) =>
+/*let simulateSubs {time} => Tea.Sub.batch [timerSubscription time, Tea.Sub.none];*/
+let simulate (start: 'm) view (update: time => 'm => 'm) ::delta_ms =>
   Tea.App.standardProgram {
     init: init start,
     view: fun {model} => /* lazy3 */ view model,
     update: simulateUpdate update,
-    subscriptions: simulateSubs
+    subscriptions: timerSubscription delta_ms
   };

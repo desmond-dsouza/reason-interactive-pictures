@@ -1,3 +1,3 @@
-let app = Animate.main (Web.Document.getElementById "root");
+let app = Simulate.main (Web.Document.getElementById "root");
 
 app () |> ignore;
