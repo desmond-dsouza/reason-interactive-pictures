@@ -9,58 +9,7 @@ type time = Time.t;
 
 type never = Tea_task.never;
 
-type mouse = {x: float, y: float};
-
-type keyCode = int;
-
 type size = {width: int, height: int};
-
-type key =
-  | Tab
-  | Enter
-  | Shift
-  | Space
-  | Left
-  | Up
-  | Right
-  | Down
-  | Zero
-  | One
-  | Two
-  | Three
-  | Four
-  | Five
-  | Six
-  | Seven
-  | Eight
-  | Nine
-  | A
-  | B
-  | C
-  | D
-  | E
-  | F
-  | G
-  | H
-  | I
-  | J
-  | K
-  | L
-  | M
-  | N
-  | O
-  | P
-  | Q
-  | R
-  | S
-  | T
-  | U
-  | V
-  | W
-  | X
-  | Y
-  | Z
-  | Other keyCode;
 
 type window = {top: float, bottom: float, left: float, right: float};
 
@@ -72,18 +21,9 @@ let window t b l r => {
 };
 
 type msg =
-  | TimeTick time
-  | MouseClick mouse
-  | MouseDown mouse
-  | MouseUp mouse
-  | MouseMove mouse
-  | KeyDown key
-  | KeyUp key
-  | WindowResize window;
+  | TimeTick time;
 
 let timeTick t => TimeTick t;
-
-let windowResize w => WindowResize w;
 
 let (>>) f g x => x |> f |> g;
 
@@ -101,18 +41,16 @@ type simulation 'model =
 type interaction 'model =
   | Program never (model 'model) msg;
 
-let init (model: 'm) (_flag: 'flags) :(model 'm, Cmd.t msg) => {
-  let windowCmd: Cmd.t msg = Cmd.none;
-  /* Tea_task.perform (sizeToWindow >> windowResize) window.size; */
-  ({window: window 0 0 0 0, time: 0., model}, Cmd.batch [windowCmd]) /* [windowCmd] */
-};
+let init (model: 'm) (_flag: 'flags) :(model 'm, Cmd.t msg) => (
+  {window: window 0 0 0 0, time: 0., model},
+  Cmd.batch [Cmd.none]
+);
 
-let windowResizeSub = Tea.Sub.none; /* Web.Window.resizes (sizeToWindow >> windowResize); */
+let windowResizeSub = Tea.Sub.none;
 
 let drawUpdate model msg =>
   switch msg {
-  | WindowResize newWindow => ({...model, window: newWindow}, Cmd.none)
-  | _ => (model, Cmd.none)
+  | TimeTick _ => (model, Cmd.none)
   };
 
 let windowToSize {top, bottom, left, right} => {
@@ -121,16 +59,9 @@ let windowToSize {top, bottom, left, right} => {
   {width, height}
 };
 
-let accumTimeSub (time: time) :Tea_sub.t msg =>
-  /*Tea.AnimationFrame.diffs (fun key::_ diff => diff +. time |> timeTick);*/
-  Time.every 60.0 timeTick;
+let accumTimeSub (time: time) :Tea_sub.t msg => Time.every 60.0 timeTick;
 
-/*viewModelWindowToHtml : (model -> Collage.Form) -> model -> window -> Html.Html msg*/
-let viewModelWindowToHtml view model window => {
-  let {width, height} = windowToSize window;
-  /*Collage.collage width height [view model] |> Element.toHtml*/
-  view model
-};
+let viewModelWindowToHtml view model window => view model;
 
 /* ******** Draw:: view : Html ********* */
 let draw view =>
@@ -147,8 +78,6 @@ let animateSubs {time} => Tea.Sub.batch [accumTimeSub time, windowResizeSub];
 let animateUpdate model msg =>
   switch msg {
   | TimeTick newTime => ({...model, time: newTime}, Cmd.none)
-  | WindowResize newWindow => ({...model, window: newWindow}, Cmd.none)
-  | _ => (model, Cmd.none)
   };
 
 let animate view =>
@@ -172,8 +101,6 @@ let simulateUpdate update ({model} as simulateModel) msg =>
         updatedModel
       };
     ({...simulateModel, time: newTime, model: newModel}, Cmd.none)
-  | WindowResize newWindow => ({...simulateModel, window: newWindow}, Cmd.none)
-  | _ => (simulateModel, Cmd.none)
   };
 
 let simulateSubs {time} => Tea.Sub.batch [accumTimeSub time, windowResizeSub];
@@ -185,4 +112,3 @@ let simulate (start: 'm) view (update: time => 'm => 'm) =>
     update: simulateUpdate update,
     subscriptions: simulateSubs
   };
-/* ******** Interact : use Tea.App.beginnerProgram ********* */
