@@ -9,55 +9,22 @@ type time = Time.t;
 
 type never = Tea_task.never;
 
-type size = {width: int, height: int};
-
-type window = {top: float, bottom: float, left: float, right: float};
-
-let window t b l r => {
-  top: float_of_int t,
-  bottom: float_of_int b,
-  left: float_of_int l,
-  right: float_of_int r
-};
-
 type msg =
   | TimeTick time;
 
 let timeTick t => TimeTick t;
 
-let (>>) f g x => x |> f |> g;
-
-type model 'm = {window, time, model: 'm};
-
-type drawing =
-  | Program never (model unit) msg;
-
-type animation =
-  | Program never (model unit) msg;
-
-type simulation 'model =
-  | Program never (model 'model) msg;
-
-type interaction 'model =
-  | Program never (model 'model) msg;
+type model 'm = {time, model: 'm};
 
 let init (model: 'm) (_flag: 'flags) :(model 'm, Cmd.t msg) => (
-  {window: window 0 0 0 0, time: 0., model},
+  {time: 0., model},
   Cmd.batch [Cmd.none]
 );
-
-let windowResizeSub = Tea.Sub.none;
 
 let drawUpdate model msg =>
   switch msg {
   | TimeTick _ => (model, Cmd.none)
   };
-
-let windowToSize {top, bottom, left, right} => {
-  let width = int_of_float (right -. left);
-  let height = int_of_float (top -. bottom);
-  {width, height}
-};
 
 let accumTimeSub (time: time) :Tea_sub.t msg => Time.every 60.0 timeTick;
 
@@ -67,13 +34,13 @@ let viewModelWindowToHtml view model window => view model;
 let draw view =>
   Tea.App.standardProgram {
     init: init (),
-    view: fun {window} => viewModelWindowToHtml (fun _ => view) () window,
+    view: fun _ => view,
     update: drawUpdate,
-    subscriptions: fun _ => windowResizeSub
+    subscriptions: fun _ => Tea.Sub.none
   };
 
 /* ******** Animate:: view : time -> Html ********* */
-let animateSubs {time} => Tea.Sub.batch [accumTimeSub time, windowResizeSub];
+let animateSubs {time} => Tea.Sub.batch [accumTimeSub time, Tea.Sub.none];
 
 let animateUpdate model msg =>
   switch msg {
@@ -83,7 +50,7 @@ let animateUpdate model msg =>
 let animate view =>
   Tea.App.standardProgram {
     init: init (),
-    view: fun {time, window} => viewModelWindowToHtml view time window,
+    view: fun {time} => view time,
     update: animateUpdate,
     subscriptions: animateSubs
   };
@@ -103,12 +70,12 @@ let simulateUpdate update ({model} as simulateModel) msg =>
     ({...simulateModel, time: newTime, model: newModel}, Cmd.none)
   };
 
-let simulateSubs {time} => Tea.Sub.batch [accumTimeSub time, windowResizeSub];
+let simulateSubs {time} => Tea.Sub.batch [accumTimeSub time, Tea.Sub.none];
 
 let simulate (start: 'm) view (update: time => 'm => 'm) =>
   Tea.App.standardProgram {
     init: init start,
-    view: fun {model, window} => /* lazy3 */ viewModelWindowToHtml view model window,
+    view: fun {model} => /* lazy3 */ view model,
     update: simulateUpdate update,
     subscriptions: simulateSubs
   };
