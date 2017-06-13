@@ -1,5 +1,3 @@
-/* TODO: pictureOf, animationOf, etc. naming, see https://code.world/ */
-/* TODO: real-time graphs (JS interop: https://goo.gl/DlcmvT) */
 module Cmd = Tea.Cmd;
 
 module Time = Tea.Time;
@@ -65,7 +63,6 @@ let simulateUpdate update {model} msg =>
     ({time: newTime, model: newModel}, Cmd.none)
   };
 
-/*let simulateSubs {time} => Tea.Sub.batch [timerSubscription time, Tea.Sub.none];*/
 let simulate (start: 'm) view (update: time => 'm => 'm) ::delta_ms =>
   Tea.App.standardProgram {
     init: init start,
