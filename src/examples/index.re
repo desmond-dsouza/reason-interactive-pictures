@@ -1,3 +1,3 @@
-let app = Simulate.main (Web.Document.getElementById "root");
+let app = Draw.main (Web.Document.getElementById "root");
 
 app () |> ignore;
