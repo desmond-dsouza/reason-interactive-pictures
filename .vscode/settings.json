@@ -1,0 +1,10 @@
+{
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "bsconfig.json"
+            ],
+            "url" : "file:///path/to/bucklescript/docs/docson/build-schema.json"
+        }
+    ]
+}

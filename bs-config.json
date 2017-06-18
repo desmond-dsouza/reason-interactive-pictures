@@ -1,0 +1,8 @@
+{  
+     "//": " **** This is a BROWSER SYNC config file, not BuckleScript! **** ",
+
+    "files" : ["./lib/es6_global/src/**/*.js", "./public/**/*.{js, html, css}"],
+    "server": { "baseDir": "." },
+    "startPath": "./public/index.html",
+    "browser" : ["safari"]
+}
