@@ -3,7 +3,7 @@
   comma. If this screws with your editor highlighting, please tell us by filing
   an issue! */
 {
-  "name": "create-reason-react-app",
+  "name": "interactive-pictures",
   "bs-dependencies": [
     "bucklescript-tea"
   ],
