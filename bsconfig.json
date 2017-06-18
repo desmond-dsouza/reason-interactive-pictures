@@ -11,7 +11,7 @@
   "sources": [
     {
       "dir": "src",
-      "subdirs": [ { "dir": "examples" }, { "dir": "pictures"} ]
+      "subdirs": [ { "dir": "examples" } ]
     }
   ]
 }
