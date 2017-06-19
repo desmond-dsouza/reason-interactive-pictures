@@ -1,14 +1,20 @@
+module H = Tea.Html;
+
+module P = Picture;
+
 let myViewNew =
-  Tea.Html.(
-    Picture.(
-      div
-        []
+  H.div
+    []
+    [
+      H.h1 [] [H.text "A drawing"],
+      P.picture
+        (1000, 300)
         [
-          h1 [] [text "A drawing"],
-          picture (300, 300) [Circle (100, 100) 50 Pink, Rect (100, 100) 500 20 Red],
-          div [] [text "below the first picture"]
-        ]
-    )
-  );
+          P.Circle (100, 100) 50 P.Pink,
+          P.Rect (100, 100) 500 20 P.Red,
+          P.Line (100, 50) (600, 100) 3 P.Green
+        ],
+      H.div [] [H.text "lorem ipsum below the first picture"]
+    ];
 
 let main: Picture.mainType = Interaction.draw myViewNew;

@@ -10,6 +10,7 @@ type color =
   | Brown
   | Purple
   | Blue
+  | Black
   | Rgb int int int;
 
 let string_of_color c =>
@@ -23,12 +24,14 @@ let string_of_color c =>
   | Brown => "brown"
   | Purple => "purple"
   | Blue => "blue"
+  | Black => "black"
   | Rgb r g b => {j|rgb($r,$g,$b)|j}
   };
 
 type figure =
   | Circle point int color
-  | Rect point int int color;
+  | Rect point int int color
+  | Line point point int color;
 
 let render f => {
   module S = Tea.Svg;
@@ -41,6 +44,17 @@ let render f => {
   | Rect (x_, y_) w_ h_ c_ =>
     S.rect
       [SA.x (str x_), SA.y (str y_), SA.width (str w_), SA.height (str h_), SA.fill (col c_)] []
+  | Line (x1_, y1_) (x2_, y2_) w_ c_ =>
+    S.line
+      [
+        SA.x1 (str x1_),
+        SA.y1 (str y1_),
+        SA.x2 (str x2_),
+        SA.y2 (str y2_),
+        SA.stroke (col c_),
+        SA.strokeWidth (str w_)
+      ]
+      []
   }
 };
 
