@@ -31,11 +31,27 @@ let string_of_color c =>
 type figure =
   | Circle point int color
   | Rect point int int color
-  | Line point point int color;
+  | Line point point int color
+  | Arrow point point int color;
+
+module S = Tea.Svg;
+
+module SA = Tea.Svg.Attributes;
+
+let arrowMarker () :Vdom.t 'm =>
+  S.marker
+    [
+      SA.id "arrow",
+      SA.markerWidth "10",
+      SA.markerHeight "10",
+      SA.refX "0",
+      SA.refY "3",
+      SA.orient "auto",
+      SA.fill "black"
+    ]
+    [S.path [SA.d "M0,0 L0, 6,L9, 3 z", SA.fill "#f00"] []];
 
 let render f => {
-  module S = Tea.Svg;
-  module SA = Tea.Svg.Attributes;
   let str = string_of_int;
   let col = string_of_color;
   switch f {
@@ -55,6 +71,18 @@ let render f => {
         SA.strokeWidth (str w_)
       ]
       []
+  | Arrow (x1_, y1_) (x2_, y2_) w_ c_ =>
+    S.line
+      [
+        SA.x1 (str x1_),
+        SA.y1 (str y1_),
+        SA.x2 (str x2_),
+        SA.y2 (str y2_),
+        SA.stroke (col c_),
+        SA.strokeWidth (str w_),
+        SA.markerEnd "url(#arrow)"
+      ]
+      []
   }
 };
 
@@ -66,5 +94,7 @@ let picture (width, height) figures => {
   let w = {j|$(width)px|j};
   let h = {j|$(height)px|j};
   let nodes = figures |> List.map render;
-  S.svg [SA.width w, SA.height h] nodes
+  let defs = [S.defs [] [arrowMarker ()]];
+  let children = List.append defs nodes;
+  S.svg [SA.width w, SA.height h] children
 };

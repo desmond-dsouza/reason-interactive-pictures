@@ -12,7 +12,8 @@ let myViewNew =
         [
           P.Circle (100, 100) 50 P.Pink,
           P.Rect (100, 100) 500 20 P.Red,
-          P.Line (100, 50) (600, 100) 3 P.Green
+          P.Line (100, 50) (600, 100) 1 P.Green,
+          P.Arrow (100, 50) (200, 200) 2 P.Black
         ],
       H.div [] [H.text "lorem ipsum below the first picture"]
     ];
