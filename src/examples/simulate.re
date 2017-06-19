@@ -10,7 +10,8 @@ let updatePerson t {mood: _mood} => {
 
 let showPerson {mood} => {
   let color = Picture.Rgb mood 100 100;
-  Picture.picture (300, 300) [Picture.Circle (100, 100) 60 color]
+  let r = 10 + mood;
+  Picture.picture (1000, 1000) [Picture.Circle (500, 500) r color]
 };
 
 let main: Picture.mainType =
