@@ -86,7 +86,7 @@ let render f => {
   }
 };
 
-type mainType = Js.null_undefined Web.Node.t => unit => Tea.App.programInterface Interaction.msg;
+type display 'msg = Js.null_undefined Web.Node.t => unit => Tea.App.programInterface 'msg;
 
 let picture (width, height) figures => {
   module S = Tea.Svg;

@@ -18,4 +18,4 @@ let myViewNew =
       H.div [] [H.text "lorem ipsum below the first picture"]
     ];
 
-let main: Picture.mainType = Interaction.draw myViewNew;
+let main: Picture.display Interaction.msg = Interaction.draw myViewNew;

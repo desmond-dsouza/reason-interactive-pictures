@@ -9,44 +9,34 @@ module P = Picture;
 type msg =
   | Inc
   | Dec
-  | Set int;
+  | Set int
+  | Tick float;
 
-let init = 2;
+let tick t => Tick t;
 
-let update model msg =>
+type model = Simulate.person;
+
+let initialModel = Simulate.initialPerson;
+
+let update (model: model) (msg: msg) :model => {
+  Js.log (model, msg);
   switch msg {
-  | Inc => model + 1
-  | Dec => model - 1
-  | Set i => i
-  };
+  | Inc => {...model, base_mood: model.base_mood + 40}
+  | Dec => {...model, base_mood: model.base_mood - 40}
+  | Set i => {...model, base_mood: i}
+  | Tick t => Simulate.updatePerson t model
+  }
+};
 
-let view model => {
-  let rec range i j => i > j ? [] : [i, ...range (i + 1) j];
-  let circles = List.map (fun i => P.Circle (100 + 40 * i, 100) 15 Blue) (range 1 model);
-  module S = Tea.Svg;
-  module SA = Tea.Svg.Attributes;
+let view model =>
   div
     []
     [
-      P.picture (300, 300) circles,
+      div [] [text {j| Model: $model |j}],
+      Simulate.showPerson model,
       button [onClick Inc] [text "+"],
-      button [onClick Dec] [text "-"],
-      S.svg
-        [SA.width "100px", SA.height "100px"]
-        [
-          S.circle
-            [
-              SA.cx "10",
-              SA.cy "10",
-              SA.r "10",
-              SA.fill "Black",
-              Tea.Html.onClick Inc,
-              Tea.Html.style "cursor" "pointer"
-            ]
-            []
-        ],
-      Animate.myView 45.0
-    ]
-};
+      button [onClick Dec] [text "-"]
+    ];
 
-let main = beginnerProgram {model: init, update, view};
+/*let main = beginnerProgram {model: initialModel, update, view};*/
+let main: Picture.display msg = Interaction.interact initialModel view update (20., tick);

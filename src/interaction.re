@@ -11,7 +11,10 @@ type msg =
 
 let timeTick t => TimeTick t;
 
-type model 'm = {time, model: 'm};
+type model 'm = {
+  time,
+  model: 'm
+};
 
 let init (model: 'm) (_flag: 'flags) :(model 'm, Cmd.t msg) => (
   {time: 0., model},
@@ -66,7 +69,20 @@ let simulateUpdate update {model} msg =>
 let simulate (start: 'm) view (update: time => 'm => 'm) ::delta_ms =>
   Tea.App.standardProgram {
     init: init start,
-    view: fun {model} => /* lazy3 */ view model,
+    view: fun {time, model} => view model,
     update: simulateUpdate update,
     subscriptions: timerSubscription delta_ms
+  };
+
+/* ******** Interact: initialModel view update ::delta_ms ********* */
+let interact
+    (initialModel: 'm)
+    (view: 'm => Vdom.t 'msg)
+    (update: 'm => 'msg => 'm)
+    (delta_ms: time, tick: time => 'msg) =>
+  Tea.App.standardProgram {
+    init: fun _flags => (initialModel, Tea.Cmd.none),
+    update: fun m msg => (update m msg, Tea.Cmd.none),
+    view,
+    subscriptions: fun _m => Tea.Time.every delta_ms tick
   };
