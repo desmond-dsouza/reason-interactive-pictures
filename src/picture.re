@@ -28,11 +28,16 @@ let string_of_color c =>
   | Rgb r g b => {j|rgb($r,$g,$b)|j}
   };
 
+type url = string;
+
 type figure =
   | Circle point int color
   | Rect point int int color
   | Line point point int color
-  | Arrow point point int color;
+  | Arrow point point int color
+  | Polygon (list point) color
+  | Polyline (list point) color
+  | Image point int int url;
 
 module S = Tea.Svg;
 
@@ -83,6 +88,15 @@ let render f => {
         SA.markerEnd "url(#arrow)"
       ]
       []
+  | Polygon points color =>
+    let pts = List.fold_left (fun s (x, y) => s ^ str x ^ "," ^ str y ^ " ") "" points;
+    S.polygon [SA.points pts, SA.fill (string_of_color color)] []
+  | Polyline points color =>
+    let pts = List.fold_left (fun s (x, y) => s ^ str x ^ "," ^ str y ^ " ") "" points;
+    S.polyline [SA.points pts, SA.stroke (string_of_color color), SA.fill "none"] []
+  | Image (x0, y0) w h url =>
+    S.svgimage
+      [SA.x (str x0), SA.y (str y0), SA.width (str w), SA.height (str h), SA.xlinkHref url] []
   }
 };
 

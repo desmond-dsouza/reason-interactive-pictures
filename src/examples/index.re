@@ -1,3 +1,3 @@
-let app = Tea_with_pictures.main (Web.Document.getElementById "root");
+let app = Draw.main (Web.Document.getElementById "root");
 
 app () |> ignore;
