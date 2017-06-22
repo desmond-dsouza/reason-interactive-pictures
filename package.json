@@ -17,7 +17,9 @@
     "bucklescript-tea": "^0.6.0"
   },
   "devDependencies": {
-    "bs-platform": "^1.7.5",
     "lite-server": "^2.3.0"
+  },
+  "peerDependencies": {
+    "bs-platform": "^1.7.5"
   }
 }
