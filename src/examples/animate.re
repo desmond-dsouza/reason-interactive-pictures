@@ -9,4 +9,4 @@ let myView t => {
   P.picture (300, 300) [P.Circle (x, y) 20 color]
 };
 
-let main: Picture.display Interaction.msg = Interaction.animate myView delta_ms::10.0;
+let main: Picture.simpleDisplay = Interaction.animate myView delta_ms::10.0;
