@@ -108,7 +108,7 @@ type simpleDisplay =
 type interactiveDisplay 'msg =
   Js.null_undefined Web.Node.t => unit => Tea.App.programInterface 'msg;
 
-let picture (width, height) figures => {
+let picture (width: int, height: int) figures => {
   module S = Tea.Svg;
   module SA = Tea.Svg.Attributes;
   let w = {j|$(width)px|j};

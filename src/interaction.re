@@ -11,12 +11,12 @@ type msg =
 
 let timeTick t => TimeTick t;
 
-type model 'm = {
+type timedModel 'm = {
   time,
   model: 'm
 };
 
-let init (model: 'm) (_flag: 'flags) :(model 'm, Cmd.t msg) => (
+let init (model: 'm) (_flag: 'flags) :(timedModel 'm, Cmd.t msg) => (
   {time: 0., model},
   Cmd.batch [Cmd.none]
 );
@@ -75,7 +75,11 @@ let simulate (start: 'm) view (update: time => 'm => 'm) ::delta_ms =>
   };
 
 /* ******** Interact: initialModel view update ::delta_ms ********* */
-let interact (initialModel: 'm) (view: 'm => Vdom.t 'msg) (update: 'm => 'msg => 'm) ::every=? =>
+let interact
+    (initialModel: 'model)
+    (view: 'model => Vdom.t 'msg)
+    (update: 'model => 'msg => 'model)
+    ::every=? =>
   /* (delta_ms: time, tick: time => 'msg) => */
   Tea.App.standardProgram {
     init: fun _flags => (initialModel, Tea.Cmd.none),
