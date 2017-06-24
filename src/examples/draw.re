@@ -1,5 +1,7 @@
 module H = Tea.Html;
 
+module HA = Tea.Html.Attributes;
+
 module P = Picture;
 
 let myViewNew =
@@ -21,4 +23,4 @@ let myViewNew =
       H.div [] [H.text "lorem ipsum below the first picture"]
     ];
 
-let main: Picture.display Interaction.msg = Interaction.draw myViewNew;
+let main: Picture.simpleDisplay = Interaction.draw myViewNew;
