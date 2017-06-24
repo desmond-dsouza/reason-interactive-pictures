@@ -86,3 +86,22 @@ let interact
     view,
     subscriptions: fun _m => Tea.Time.every delta_ms tick
   };
+
+/* ***** Convenient Widgets ****** */
+let slider (label': string) (lower: int) (upper: int) action' => {
+  module H = Tea.Html;
+  module A = Tea.Html.Attributes;
+  H.div
+    []
+    [
+      H.text label',
+      H.input'
+        [
+          H.type' "range",
+          A.min (string_of_int lower),
+          A.max (string_of_int upper),
+          H.onChange action'
+        ]
+        []
+    ]
+};
