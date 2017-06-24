@@ -18,7 +18,8 @@ let myViewNew =
           P.Arrow (100, 50) (200, 200) 2 P.Black,
           P.Polygon [(10, 10), (30, 10), (50, 60), (20, 90)] P.Yellow,
           P.Polyline [(110, 10), (130, 10), (150, 60), (120, 90)] P.Green,
-          P.Image (500, 0) 100 100 "http://kinetium.com/images/prism.gif"
+          P.Image (500, 0) 100 100 "http://kinetium.com/images/prism.gif",
+          P.Text (500, 200) "Text in Picture"
         ],
       H.div [] [H.text "lorem ipsum below the first picture"]
     ];

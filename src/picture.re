@@ -37,7 +37,8 @@ type figure =
   | Arrow point point int color
   | Polygon (list point) color
   | Polyline (list point) color
-  | Image point int int url;
+  | Image point int int url
+  | Text point string;
 
 module S = Tea.Svg;
 
@@ -97,6 +98,7 @@ let render f => {
   | Image (x0, y0) w h url =>
     S.svgimage
       [SA.x (str x0), SA.y (str y0), SA.width (str w), SA.height (str h), SA.xlinkHref url] []
+  | Text (x0, y0) s => S.text' [SA.x (str x0), SA.y (str y0)] [S.text s]
   }
 };
 
