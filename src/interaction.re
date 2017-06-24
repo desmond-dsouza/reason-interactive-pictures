@@ -100,7 +100,7 @@ let slider (label': string) (lower: int) (upper: int) action' => {
           H.type' "range",
           A.min (string_of_int lower),
           A.max (string_of_int upper),
-          H.onChange action'
+          H.onInput action'
         ]
         []
     ]
