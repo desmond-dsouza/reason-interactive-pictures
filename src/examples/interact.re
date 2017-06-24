@@ -13,11 +13,10 @@ type msg =
   | Dec
   | Set int
   | Tick float
-  | Slider int;
+  | Slider int
+[@@bs.deriving {accessors: accessors}];
 
-let setSlider s => Slider (int_of_string s);
-
-let tick t => Tick t;
+let sliderMsg str => Slider (int_of_string str);
 
 type model = Simulate.person;
 
@@ -37,13 +36,13 @@ let view model =>
   div
     []
     [
-      div [] [text {j| Model: $model |j}],
+      div [] [text {j| MMModel: $model |j}],
       Simulate.showPerson model,
       button [onClick Inc] [text "+"],
       button [onClick Dec] [text "-"],
-      I.slider "Model Shift" 0 200 setSlider
+      I.slider "Model Shift" 0 200 sliderMsg
     ];
 
 /*let main = beginnerProgram {model: initialModel, update, view};*/
 let main: Picture.interactiveDisplay msg =
-  Interaction.interact initialModel view update (20., tick);
+  Interaction.interact initialModel view update every::(20., tick);

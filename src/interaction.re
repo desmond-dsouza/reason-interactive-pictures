@@ -75,16 +75,17 @@ let simulate (start: 'm) view (update: time => 'm => 'm) ::delta_ms =>
   };
 
 /* ******** Interact: initialModel view update ::delta_ms ********* */
-let interact
-    (initialModel: 'm)
-    (view: 'm => Vdom.t 'msg)
-    (update: 'm => 'msg => 'm)
-    (delta_ms: time, tick: time => 'msg) =>
+let interact (initialModel: 'm) (view: 'm => Vdom.t 'msg) (update: 'm => 'msg => 'm) ::every=? =>
+  /* (delta_ms: time, tick: time => 'msg) => */
   Tea.App.standardProgram {
     init: fun _flags => (initialModel, Tea.Cmd.none),
     update: fun m msg => (update m msg, Tea.Cmd.none),
     view,
-    subscriptions: fun _m => Tea.Time.every delta_ms tick
+    subscriptions:
+      switch every {
+      | None => (fun _m => Tea.Sub.none)
+      | Some (deltaT, tickMsg) => (fun _m => Tea.Time.every deltaT tickMsg)
+      }
   };
 
 /* ***** Convenient Widgets ****** */
@@ -100,6 +101,7 @@ let slider (label': string) (lower: int) (upper: int) action' => {
           H.type' "range",
           A.min (string_of_int lower),
           A.max (string_of_int upper),
+          H.value (string_of_int lower),
           H.onInput action'
         ]
         []
