@@ -40,6 +40,21 @@ type figure =
   | Image point int int url
   | Text point string;
 
+let debug (s: string) (a: 'a) => {
+  Js.log (s, a);
+  a
+};
+
+let line (x: int, y: int) (l: int) (theta: int) (thick: int) (color: color) => {
+  let radians = float_of_int theta *. 2.0 *. 3.14159 /. 360.;
+  let fl = float_of_int;
+  /*Js.log (x, y, l, theta, thick, color);*/
+  let x2 = fl x +. fl l *. cos radians |> int_of_float;
+  let y2 = fl y +. fl l *. sin radians |> int_of_float;
+  /*Js.log ("Radians: ", radians, "x2,y2", (x2, y2));*/
+  Line (x, y) (x2, y2) thick color
+};
+
 module S = Tea.Svg;
 
 module SA = Tea.Svg.Attributes;
