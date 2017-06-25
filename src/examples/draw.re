@@ -1,27 +1,26 @@
-module H = Tea.Html;
+type person = {
+  base_mood: int,
+  mood_swing: int,
+  shift: int
+};
 
-module HA = Tea.Html.Attributes;
+let initialPerson = {base_mood: 120, mood_swing: 0, shift: 0};
 
-module P = Picture;
+let showPerson {base_mood, mood_swing, shift} => {
+  let mood = base_mood + mood_swing;
+  let color = Picture.Rgb mood 100 100;
+  let r = max (10 + mood) 10;
+  let (headX, headY) = (250 + shift, 260);
+  let head = Picture.Circle (headX, headY) r color;
+  let (bodyLen, bodyThick) = (30, 5);
+  let (bodyTop, bodyBot) = ((headX, headY + r), (headX, headY + r + bodyLen));
+  let body = Picture.Line bodyTop bodyBot bodyThick Black;
+  let arms =
+    Picture.Line (headX - 15, headY + r + 15) (headX + 15, headY + r + 15) bodyThick Black;
+  let legL = Picture.line bodyBot bodyLen 120 bodyThick Black;
+  let legR = Picture.line bodyBot bodyLen 60 bodyThick Black;
+  /*Js.log {j|Head: $head Body: $body|j};*/
+  Picture.picture (1000, 900) [head, body, arms, legL, legR]
+};
 
-let myViewNew =
-  H.div
-    []
-    [
-      H.h1 [] [H.text "A drawing"],
-      P.picture
-        (1000, 300)
-        [
-          P.Circle (100, 100) 50 P.Pink,
-          P.Rect (100, 100) 500 20 P.Red,
-          P.Line (100, 50) (600, 100) 1 P.Green,
-          P.Arrow (100, 50) (200, 200) 2 P.Black,
-          P.Polygon [(10, 10), (30, 10), (50, 60), (20, 90)] P.Yellow,
-          P.Polyline [(110, 10), (130, 10), (150, 60), (120, 90)] P.Green,
-          P.Image (500, 0) 100 100 "http://kinetium.com/images/prism.gif",
-          P.Text (500, 200) "Text in Picture"
-        ],
-      H.div [] [H.text "lorem ipsum below the first picture"]
-    ];
-
-let main: Picture.simpleDisplay = Interaction.draw myViewNew;
+let main: Picture.simpleDisplay = Interaction.draw (showPerson initialPerson);

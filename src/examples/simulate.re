@@ -1,21 +1,12 @@
-type person = {
-  base_mood: int,
-  mood_swing: int,
-  shift: int
-};
+type person = Draw.person;
 
-let initialPerson = {base_mood: 120, mood_swing: 0, shift: 0};
+let initialPerson = Draw.initialPerson;
+
+let showPerson = Draw.showPerson;
 
 let updatePerson t (p: person) => {
   let delta = 120. *. sin (t /. 250.) |> int_of_float;
-  {...p, mood_swing: delta}
-};
-
-let showPerson {base_mood, mood_swing, shift} => {
-  let mood = base_mood + mood_swing;
-  let color = Picture.Rgb mood 100 100;
-  let r = 10 + mood;
-  Picture.picture (1000, 600) [Picture.Circle (250 + shift, 260) r color]
+  {...p, Draw.mood_swing: delta}
 };
 
 let main: Picture.simpleDisplay =

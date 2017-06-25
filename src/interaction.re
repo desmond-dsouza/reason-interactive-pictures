@@ -9,6 +9,11 @@ type never = Tea_task.never;
 type msg =
   | TimeTick time;
 
+let debug (s: string) (a: 'a) => {
+  Js.log (s, a);
+  a
+};
+
 let timeTick t => TimeTick t;
 
 type timedModel 'm = {

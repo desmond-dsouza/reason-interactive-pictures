@@ -36,7 +36,7 @@ let view model =>
   div
     []
     [
-      div [] [text {j| MMModel: $model |j}],
+      div [] [text {j| Model: $model |j}],
       Simulate.showPerson model,
       button [onClick Inc] [text "+"],
       button [onClick Dec] [text "-"],
