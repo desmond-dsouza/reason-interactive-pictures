@@ -50,6 +50,16 @@ let line (x: int, y: int) (l: int) (theta: int) (thick: int) (color: color) => {
   Line (x, y) (x2, y2) thick color
 };
 
+let stylesheet url =>
+  Tea.Html.node
+    "link"
+    [
+      Vdom.prop "rel" "stylesheet",
+      Tea.Html.type' "text/css",
+      Tea.Html.href "http://yui.yahooapis.com/pure/0.6.0/pure-min.css"
+    ]
+    [];
+
 module S = Tea.Svg;
 
 module SA = Tea.Svg.Attributes;
