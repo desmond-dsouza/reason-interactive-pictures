@@ -5,37 +5,44 @@ module Simulate = Simulate;
 type msg =
   | Inc
   | Dec
-  | Set int
+  | SetShift int
   | Tick float
   | Slider int
+  | SetSimRate int
 [@@bs.deriving {accessors: accessors}];
 
-let sliderMsg str => Slider (int_of_string str);
+type model = {
+  person: Simulate.person,
+  simRate: int
+};
 
-type model = Simulate.person;
-
-let initialModel = Simulate.initialPerson;
+let initialModel = {person: Simulate.initialPerson, simRate: 1};
 
 let update (model: model) (msg: msg) :model =>
   /*Js.log (model, msg);*/
   switch msg {
-  | Inc => {...model, base_mood: model.base_mood + 40}
-  | Dec => {...model, base_mood: model.base_mood - 40}
-  | Set i => {...model, shift: i}
-  | Tick t => Simulate.updatePerson t model
-  | Slider i => {...model, shift: i}
+  | Inc => {...model, person: {...model.person, base_mood: model.person.base_mood + 40}}
+  | Dec => {...model, person: {...model.person, base_mood: model.person.base_mood - 40}}
+  | SetShift i => {...model, person: {...model.person, shift: i}}
+  | Tick t => {
+      ...model,
+      person: Simulate.updatePerson (t /. float_of_int model.simRate) model.person
+    }
+  | Slider i => {...model, person: {...model.person, shift: i}}
+  | SetSimRate i => {...model, simRate: i}
   };
 
-let view model =>
+let view {person, simRate} =>
   H.div
     []
     [
-      H.div [] [H.text {j| Model: $model |j}],
+      H.div [] [H.text {j| Model + Simulation Brakes: $person, $simRate |j}],
       H.button [H.onClick Inc] [H.text "Inc Base_Mood"],
       H.button [H.onClick Dec] [H.text "Dec Base_Mood"],
-      Interaction.slider "Model Shift" 0 200 sliderMsg,
-      Interaction.selector "Model Shift Select" [0, 20, 50, 100, 200] set,
-      Simulate.showPerson model
+      Interaction.slider "Model Shift (slider)" 0 200 setShift,
+      Interaction.selector "Model Shift (select)" [0, 20, 50, 100, 200] setShift,
+      Interaction.slider "Simulation Brakes" 1 10 setSimRate,
+      Simulate.showPerson person
     ];
 
 /*let main = beginnerProgram {model: initialModel, update, view};*/
