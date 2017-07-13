@@ -1,6 +1,8 @@
+module Draw = Draw;
+
 let showPersonAt (t: float) => {
   let delta = 120. *. sin (t /. 250.) |> int_of_float;
-  let p' = Interaction.debug "p': " {...Draw.initialPerson, Draw.shift: delta};
+  let p' = Interaction.debug "p': " {...Draw.initialPerson, shift: delta};
   Draw.showPerson p'
 };
 

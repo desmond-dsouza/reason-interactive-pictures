@@ -20,7 +20,7 @@ let showPerson {base_mood, mood_swing, shift} => {
   let legL = Picture.line bodyBot bodyLen 120 bodyThick Black;
   let legR = Picture.line bodyBot bodyLen 60 bodyThick Black;
   /*Js.log {j|Head: $head Body: $body|j};*/
-  Picture.picture (1000, 900) [head, body, arms, legL, legR]
+  Picture.picture (1000, 600) [head, body, arms, legL, legR]
 };
 
 let main: Picture.simpleDisplay = Interaction.draw (showPerson initialPerson);

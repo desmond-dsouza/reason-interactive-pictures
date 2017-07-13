@@ -1,12 +1,6 @@
-open Tea.App;
+module H = Tea.Html;
 
-open Tea.Html;
-
-open Tea.Html.Attributes;
-
-module I = Interaction;
-
-module P = Picture;
+module Simulate = Simulate;
 
 type msg =
   | Inc
@@ -27,20 +21,21 @@ let update (model: model) (msg: msg) :model =>
   switch msg {
   | Inc => {...model, base_mood: model.base_mood + 40}
   | Dec => {...model, base_mood: model.base_mood - 40}
-  | Set i => {...model, base_mood: i}
+  | Set i => {...model, shift: i}
   | Tick t => Simulate.updatePerson t model
   | Slider i => {...model, shift: i}
   };
 
 let view model =>
-  div
+  H.div
     []
     [
-      div [] [text {j| Model: $model |j}],
-      Simulate.showPerson model,
-      button [onClick Inc] [text "+"],
-      button [onClick Dec] [text "-"],
-      I.slider "Model Shift" 0 200 sliderMsg
+      H.div [] [H.text {j| Model: $model |j}],
+      H.button [H.onClick Inc] [H.text "Inc Base_Mood"],
+      H.button [H.onClick Dec] [H.text "Dec Base_Mood"],
+      Interaction.slider "Model Shift" 0 200 sliderMsg,
+      Interaction.selector "Model Shift Select" [0, 20, 50, 100, 200] set,
+      Simulate.showPerson model
     ];
 
 /*let main = beginnerProgram {model: initialModel, update, view};*/

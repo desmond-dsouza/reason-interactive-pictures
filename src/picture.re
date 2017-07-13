@@ -38,7 +38,20 @@ type figure =
   | Polygon (list point) color
   | Polyline (list point) color
   | Image point int int url
-  | Text point string;
+  | Text point string
+  | Labeled string figure;
+
+let labelPos (f: figure) =>
+  switch f {
+  | Circle pos _ _
+  | Rect pos _ _ _
+  | Line _ pos _ _
+  | Arrow _ pos _ _
+  | Polygon [pos, ..._] _
+  | Polyline [pos, ..._] _
+  | Image pos _ _ _ => pos
+  | _ => raise (Invalid_argument "no labelPos defined")
+  };
 
 let line (x: int, y: int) (l: int) (theta: int) (thick: int) (color: color) => {
   let radians = float_of_int theta *. 2.0 *. 3.14159 /. 360.;
@@ -52,13 +65,15 @@ let line (x: int, y: int) (l: int) (theta: int) (thick: int) (color: color) => {
 
 let stylesheet url =>
   Tea.Html.node
-    "link"
-    [
-      Vdom.prop "rel" "stylesheet",
-      Tea.Html.type' "text/css",
-      Tea.Html.href "http://yui.yahooapis.com/pure/0.6.0/pure-min.css"
-    ]
-    [];
+    "link" [Vdom.prop "rel" "stylesheet", Tea.Html.type' "text/css", Tea.Html.href url] [];
+
+let cssBulmaUrl = "https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.2/css/bulma.min.css";
+
+let cssPureCssUrl = "https://unpkg.com/purecss@1.0.0/build/pure-min.css";
+
+let cssFontAwesomeUrl = "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css";
+
+let cssTachyonsUrl = "https://unpkg.com/tachyons@4.7.0/css/tachyons.min.css";
 
 module S = Tea.Svg;
 
@@ -77,7 +92,7 @@ let arrowMarker () :Vdom.t 'm =>
     ]
     [S.path [SA.d "M0,0 L0, 6,L9, 3 z", SA.fill "#f00"] []];
 
-let render f => {
+let rec render (f: figure) => {
   let str = string_of_int;
   let col = string_of_color;
   switch f {
@@ -119,6 +134,7 @@ let render f => {
     S.svgimage
       [SA.x (str x0), SA.y (str y0), SA.width (str w), SA.height (str h), SA.xlinkHref url] []
   | Text (x0, y0) s => S.text' [SA.x (str x0), SA.y (str y0)] [S.text s]
+  | Labeled label fig => S.g [] [fig |> render, Text (labelPos fig) label |> render]
   }
 };
 

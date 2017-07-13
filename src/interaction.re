@@ -98,21 +98,33 @@ let interact
   };
 
 /* ***** Convenient Widgets ****** */
+module H = Tea.Html;
+
+module A = Tea.Html.Attributes;
+
+let labeledWidget label' widget => H.div [] [H.text label', H.text " ", widget];
+
 let slider (label': string) (lower: int) (upper: int) action' => {
-  module H = Tea.Html;
-  module A = Tea.Html.Attributes;
-  H.div
-    []
-    [
-      H.text label',
-      H.input'
-        [
-          H.type' "range",
-          A.min (string_of_int lower),
-          A.max (string_of_int upper),
-          H.value (string_of_int lower),
-          H.onInput action'
-        ]
-        []
-    ]
+  let widget =
+    H.input'
+      [
+        H.type' "range",
+        A.min (string_of_int lower),
+        A.max (string_of_int upper),
+        H.value (string_of_int lower),
+        H.onInput action'
+      ]
+      [];
+  labeledWidget label' widget
+};
+
+let stringify x => {j|$x|j};
+
+let selector (label': string) (choices: list 'a) (action': 'a => 'msg) => {
+  let strings = List.map stringify choices;
+  let options = List.map (fun s => H.option' [H.value s] [H.text s]) strings;
+  let chosen str => List.find (fun x => stringify x == str) choices;
+  let msg str => action' (chosen str);
+  let sel = H.select [H.onChange msg] options;
+  labeledWidget label' sel
 };
