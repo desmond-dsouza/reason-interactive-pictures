@@ -19,7 +19,6 @@ let showPerson {base_mood, mood_swing, shift} => {
     Picture.Line (headX - 15, headY + r + 15) (headX + 15, headY + r + 15) bodyThick Black;
   let legL = Picture.line bodyBot bodyLen 120 bodyThick Black;
   let legR = Picture.line bodyBot bodyLen 60 bodyThick Black;
-  /*Js.log {j|Head: $head Body: $body|j};*/
   Picture.picture (1000, 600) [head, body, arms, legL, legR]
 };
 

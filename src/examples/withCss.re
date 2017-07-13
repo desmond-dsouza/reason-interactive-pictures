@@ -22,18 +22,3 @@ let view =
     ];
 
 let main: Picture.simpleDisplay = Interaction.draw view;
-/*[
-            H.div [H.class' "column is-three-quarters"] [
-                      Draw.showPerson Draw.initialPerson;
-            ] /*
-              /, *H.div [H.class' "column"] [
-                  H.h3 "heading 3",
-                  H.text lorem,
-                  H.h3 "heading 3",
-                  H.text lorem
-              ],
-              H.div [H.class' "column"] [
-                  Draw.showPerson Draw.initialPerson
-              ]*/
-          ]
-  ];*/

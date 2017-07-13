@@ -1,3 +1,3 @@
-let app = Interact.main (Web.Document.getElementById "root");
+let app = WithCss.main (Web.Document.getElementById "root");
 
 app () |> ignore;

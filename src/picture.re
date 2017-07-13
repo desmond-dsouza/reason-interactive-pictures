@@ -30,6 +30,8 @@ let string_of_color c =>
 
 type url = string;
 
+/* TODO: minimal constructors: Line Ellipse Polygon Text Image Group */
+/* ... but then more difficult to do things like generic Labeled? */
 type figure =
   | Circle point int color
   | Rect point int int color
@@ -56,11 +58,28 @@ let labelPos (f: figure) =>
 let line (x: int, y: int) (l: int) (theta: int) (thick: int) (color: color) => {
   let radians = float_of_int theta *. 2.0 *. 3.14159 /. 360.;
   let fl = float_of_int;
-  /*Js.log (x, y, l, theta, thick, color);*/
   let x2 = fl x +. fl l *. cos radians |> int_of_float;
   let y2 = fl y +. fl l *. sin radians |> int_of_float;
-  /*Js.log ("Radians: ", radians, "x2,y2", (x2, y2));*/
   Line (x, y) (x2, y2) thick color
+};
+
+module S = Tea.Svg;
+
+module SA = Tea.Svg.Attributes;
+
+let arrowHead (x1, y1) (x2, y2) lineWidth color => {
+  let i = int_of_float;
+  let f = float_of_int;
+  let (vX, vY) = (x2 - x1 |> f, y2 - y1 |> f);
+  let len = vX *. vX +. vY *. vY |> sqrt;
+  let (uX, uY) = (vX /. len, vY /. len);
+  let headL = 3. +. f lineWidth *. 2.;
+  let (dX, dY) = (-. (headL *. uX), -. (headL *. uY));
+  let (idX, idY) = (i dX, i dY);
+  let (bX, bY) = (x2 + idX, y2 + idY);
+  let (c1X, c1Y) = (bX - idY, bY + idX);
+  let (c2X, c2Y) = (bX + idY, bY - idX);
+  [Line (x2, y2) (c1X, c1Y) lineWidth color, Line (x2, y2) (c2X, c2Y) lineWidth color]
 };
 
 let stylesheet url =>
@@ -74,23 +93,6 @@ let cssPureCssUrl = "https://unpkg.com/purecss@1.0.0/build/pure-min.css";
 let cssFontAwesomeUrl = "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css";
 
 let cssTachyonsUrl = "https://unpkg.com/tachyons@4.7.0/css/tachyons.min.css";
-
-module S = Tea.Svg;
-
-module SA = Tea.Svg.Attributes;
-
-let arrowMarker () :Vdom.t 'm =>
-  S.marker
-    [
-      SA.id "arrow",
-      SA.markerWidth "10",
-      SA.markerHeight "10",
-      SA.refX "0",
-      SA.refY "3",
-      SA.orient "auto",
-      SA.fill "black"
-    ]
-    [S.path [SA.d "M0,0 L0, 6,L9, 3 z", SA.fill "#f00"] []];
 
 let rec render (f: figure) => {
   let str = string_of_int;
@@ -112,18 +114,22 @@ let rec render (f: figure) => {
         SA.strokeWidth (str w_)
       ]
       []
-  | Arrow (x1_, y1_) (x2_, y2_) w_ c_ =>
-    S.line
-      [
-        SA.x1 (str x1_),
-        SA.y1 (str y1_),
-        SA.x2 (str x2_),
-        SA.y2 (str y2_),
-        SA.stroke (col c_),
-        SA.strokeWidth (str w_),
-        SA.markerEnd "url(#arrow)"
-      ]
-      []
+  | Arrow p1 p2 w c =>
+    let (x1, y1) = p1;
+    let (x2, y2) = p2;
+    let head = List.map render (arrowHead p1 p2 w c);
+    let line =
+      S.line
+        [
+          SA.x1 (str x1),
+          SA.y1 (str y1),
+          SA.x2 (str x2),
+          SA.y2 (str y2),
+          SA.stroke (col c),
+          SA.strokeWidth (str w)
+        ]
+        [];
+    S.g [] [line, ...head]
   | Polygon points color =>
     let pts = List.fold_left (fun s (x, y) => s ^ str x ^ "," ^ str y ^ " ") "" points;
     S.polygon [SA.points pts, SA.fill (string_of_color color)] []
@@ -134,7 +140,7 @@ let rec render (f: figure) => {
     S.svgimage
       [SA.x (str x0), SA.y (str y0), SA.width (str w), SA.height (str h), SA.xlinkHref url] []
   | Text (x0, y0) s => S.text' [SA.x (str x0), SA.y (str y0)] [S.text s]
-  | Labeled label fig => S.g [] [fig |> render, Text (labelPos fig) label |> render]
+  | Labeled label fig => S.g [] [Text (labelPos fig) label |> render, fig |> render]
   }
 };
 
@@ -150,7 +156,5 @@ let picture (width: int, height: int) figures => {
   let w = {j|$(width)px|j};
   let h = {j|$(height)px|j};
   let nodes = figures |> List.map render;
-  let defs = [S.defs [] [arrowMarker ()]];
-  let children = List.append defs nodes;
-  S.svg [SA.width w, SA.height h] children
+  S.svg [SA.width w, SA.height h] nodes
 };
