@@ -104,7 +104,8 @@ module A = Tea.Html.Attributes;
 
 let labeledWidget label' widget => H.div [] [H.text label', H.text " ", widget];
 
-let slider (label': string) (lower: int) (upper: int) action' => {
+let slider (label': string) (lower: int) (upper: int) (action': int => 'msg) => {
+  let sliderMsg str => action' (int_of_string str);
   let widget =
     H.input'
       [
@@ -112,7 +113,7 @@ let slider (label': string) (lower: int) (upper: int) action' => {
         A.min (string_of_int lower),
         A.max (string_of_int upper),
         H.value (string_of_int lower),
-        H.onInput action'
+        H.onInput sliderMsg
       ]
       [];
   labeledWidget label' widget
