@@ -6,11 +6,13 @@ type color =
   | Green
   | Orange
   | Pink
-  | Grey
   | Brown
   | Purple
   | Blue
   | Black
+  | White
+  | Grey
+  | Named string
   | Rgb int int int;
 
 let string_of_color c =>
@@ -20,11 +22,13 @@ let string_of_color c =>
   | Green => "green"
   | Orange => "orange"
   | Pink => "pink"
-  | Grey => "grey"
   | Brown => "brown"
   | Purple => "purple"
   | Blue => "blue"
   | Black => "black"
+  | White => "white"
+  | Grey => "grey"
+  | Named s => s
   | Rgb r g b => {j|rgb($r,$g,$b)|j}
   };
 
