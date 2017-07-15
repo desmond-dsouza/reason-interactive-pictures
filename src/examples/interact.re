@@ -22,22 +22,23 @@ let view {person, simRate} =>
   H.div
     []
     [
-      H.div [] [H.text {j| Model :: Simulation Rate: $person :: $simRate |j}],
+      H.div [] [H.text {j| Model: $person  :: Simulation Rate:: $simRate |j}],
       H.button [H.onClick Inc] [H.text "Inc Base_Mood"],
       H.button [H.onClick Dec] [H.text "Dec Base_Mood"],
-      Interaction.slider "Model Shift (slider)" 0 200 setShift,
-      Interaction.selector "Model Shift (select)" [0, 20, 50, 100, 200] setShift,
-      Interaction.slider "Simulation Rate" 1 10 setSimRate,
+      Interaction.selector
+        label'::"Model Shift" choices::[0, 20, 50, 100, 200] init::person.shift action::setShift,
+      Interaction.slider label'::"Simulation Rate" min::1 max::10 init::simRate action::setSimRate,
       Simulate.showPerson person
     ];
 
 /* *********** Update ******* */
 let update (model: model) (msg: msg) :model =>
-  /*Js.log (model, msg);*/
   switch msg {
   | Inc => {...model, person: {...model.person, base_mood: model.person.base_mood + 40}}
   | Dec => {...model, person: {...model.person, base_mood: model.person.base_mood - 40}}
-  | SetShift i => {...model, person: {...model.person, shift: i}}
+  | SetShift i =>
+    Js.log ("SetShift : " ^ string_of_int i);
+    {...model, person: {...model.person, shift: i}}
   | Tick t => {
       ...model,
       person: Simulate.updatePerson (t *. float_of_int model.simRate /. 10.) model.person
@@ -48,6 +49,5 @@ let update (model: model) (msg: msg) :model =>
 /* *********** Initialize ******** */
 let initialModel = {person: Simulate.initialPerson, simRate: 1};
 
-/*let main = beginnerProgram {model: initialModel, update, view};*/
 let main: Picture.interactiveDisplay msg =
   Interaction.interact initialModel view update every::(20., tick);

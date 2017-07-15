@@ -98,34 +98,36 @@ let interact
   };
 
 /* ***** Convenient Widgets ****** */
+/* TODO: make extension of Html module */
 module H = Tea.Html;
 
 module A = Tea.Html.Attributes;
 
 let labeledWidget label' widget => H.div [] [H.text label', H.text " ", widget];
 
-let slider (label': string) (lower: int) (upper: int) (action': int => 'msg) => {
-  let sliderMsg str => action' (int_of_string str);
+let slider ::label' ::min ::max ::init action::(action: int => 'msg) => {
+  let sliderMsg str => action (int_of_string str);
   let widget =
     H.input'
       [
         H.type' "range",
-        A.min (string_of_int lower),
-        A.max (string_of_int upper),
-        H.value (string_of_int lower),
+        A.min (string_of_int min),
+        A.max (string_of_int max),
+        H.value (string_of_int init),
         H.onInput sliderMsg
       ]
       [];
   labeledWidget label' widget
 };
 
-let stringify x => {j|$x|j};
-
-let selector (label': string) (choices: list 'a) (action': 'a => 'msg) => {
-  let strings = List.map stringify choices;
-  let options = List.map (fun s => H.option' [H.value s] [H.text s]) strings;
+let selector ::label' ::choices ::init action::(action: 'a => 'msg) => {
+  let stringify x => {j|$x|j};
+  let options =
+    List.map
+      (fun a => H.option' (a == init ? [A.selected true] : [H.noProp]) [a |> stringify |> H.text])
+      choices;
   let chosen str => List.find (fun x => stringify x == str) choices;
-  let msg str => action' (chosen str);
+  let msg str => action (chosen str);
   let sel = H.select [H.onChange msg] options;
   labeledWidget label' sel
 };

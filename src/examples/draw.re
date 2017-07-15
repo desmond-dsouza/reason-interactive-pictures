@@ -4,7 +4,7 @@ type person = {
   shift: int
 };
 
-let initialPerson = {base_mood: 120, mood_swing: 0, shift: 0};
+let initialPerson = {base_mood: 120, mood_swing: 0, shift: 55};
 
 let showPerson {base_mood, mood_swing, shift} => {
   let mood = base_mood + mood_swing;
