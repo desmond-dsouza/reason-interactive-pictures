@@ -86,9 +86,27 @@ let arrowHead (x1, y1) (x2, y2) lineWidth color => {
   [Line (x2, y2) (c1X, c1Y) lineWidth color, Line (x2, y2) (c2X, c2Y) lineWidth color]
 };
 
+type css =
+  /* TODO: use Map from these to Url strings */
+  /* Materialize & Bulma might be the most promising, Tacit for class-free html */
+  | Materialize
+  | Bulma
+  | Tacit
+  | Pure
+  | FontAwesome
+  | Tachyon
+  | Mui
+  | ByUrl string;
+
 let stylesheet url =>
   Tea.Html.node
     "link" [Vdom.prop "rel" "stylesheet", Tea.Html.type' "text/css", Tea.Html.href url] [];
+
+let materializeCssUrl = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css";
+
+let tacitCssUrl = "https://cdn.rawgit.com/yegor256/tacit/gh-pages/tacit-VERSION.min.css";
+
+let cssMuiUrl = "//cdn.muicss.com/mui-0.9.18/css/mui.min.css";
 
 let cssBulmaUrl = "https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.2/css/bulma.min.css";
 

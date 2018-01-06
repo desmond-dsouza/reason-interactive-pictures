@@ -98,7 +98,7 @@ let interact
   };
 
 /* ***** Convenient Widgets ****** */
-/* TODO: make extension of Html module */
+/* TODO: make extension of Html module, add other modules Color etc. */
 module H = Tea.Html;
 
 module A = Tea.Html.Attributes;
